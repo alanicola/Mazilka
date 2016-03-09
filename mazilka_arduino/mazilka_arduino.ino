@@ -3,8 +3,9 @@
 #include "IOpins.h"
 
 
-int volts;                                         // напряжение батареи
-int pause=-1;                                      // a value of -1 means the battery voltage is ok, 0 and 1 are used to flash LED on D13 when the battery is flat
+int volts;                                          // напряжение батареи
+int pause=-1;                                       // значение -1 означает, что напряжение батареи нормально, 
+                                                    //0 и 1 используются для мигания светодиодом на пине 13, когда батарея разряжена
 byte pen;
 byte turn;
 
@@ -16,55 +17,58 @@ volatile int rcount;                                // счетчик на пр�
 volatile int lcount;                                // счетчик на левом колесе  (8 полный оборот)
 
 void setup()
+
 {
 
-  attachInterrupt(0,Rcount,CHANGE);
-  attachInterrupt(1,Lcount,CHANGE);
+  attachInterrupt(0,Rcount,CHANGE);                 // разрешаем прерывание на 2м пине (счетчик оборотов правое колесо)
+  attachInterrupt(1,Lcount,CHANGE);                 // разрешаем прерывание на 3м пине (счетчик оборотов левое колесо)
   
-  Serial.begin(57600);                             // initialize serial interface - 9600 baud   
-  pinMode(Ldirpin,OUTPUT);                         // set left  direction pin as an output pin
-  pinMode(Rdirpin,OUTPUT);                         // set right direction pin as an output pin
-  pinMode(Srvopin,OUTPUT);                         // set servo  control  pin as an output pin
-  digitalWrite(2,1);                               // enable pullup resistor on D2
-  digitalWrite(3,1);                               // enable pullup resistor on D3
-  Up();                                                // start the program with the pen raised
-  delay(1000);
+  digitalWrite(2,1);                                // подтягиваем резистор на 2м пине
+  digitalWrite(3,1);                                // подтягиваем резистор на 3м пине
+
+  Serial.begin(57600);                              // настройка серийного порта для связи на скорости 57600  
+
+  pinMode(Ldirpin,OUTPUT);                          // пин левого двигателя настраиваем на выход
+  pinMode(Rdirpin,OUTPUT);                          // пин правого двигателя настраиваем на выход
+  pinMode(Srvopin,OUTPUT);                          // пин серво мотора настраиваем на выход
+
+  Up();                                             // во время старта программы фломастер/ручка должен не касаться поверхности для рисования
+
+  delay(500);                                       // небольшая задержка
   
 }
 
 void loop()
 { 
-  volts=analogRead(Battery)/20;
+                                                    // проверяем необходимые условия для начала рисования
+  volts=analogRead(Battery)/20;                     // считываем значение АЦП 
   
-  if(volts<lowbat || pause!=-1)                    // once voltage falls below lowbat value
+  if(volts<lowbat || pause!=-1)                     // сравниваем полученной значение с минимальным ИЛИ флагом паузы
   {
-    lspeed=0;                                      // stop left  motor
-    rspeed=0;                                      // stop right motor
-    Motors();                                      // update motor control pins
-    if (pause<0) Up();                             // make sure pen is raised when battery first falls below lowbat value
-    pause++;                                       // increment pause
-    if(pause>1) pause=0;                           // toggle pause between 0 and 1 once battery is flat
-    digitalWrite(13,pause);                        // flash LED on D13
-    delay(200);                                    // set flashing LED speed
-    return;                                        // reset loop
+    lspeed=0;                                       // установить скорость левого мотора
+    rspeed=0;                                       // установить скорость праваго мотора
+    Motors();                                       // задать скорости моторам
+    if (pause<0) Up();                              // моргаем светодиодом 
+    pause++;                                         
+    if(pause>1) pause=0;                             
+    digitalWrite(13,pause);                          
+    delay(200);                                      
+    return;                                         // заново проверяем условия для запуска рисования
   }
-                                                   // current is proportional to voltage and power = voltage x current
-                                                   // As the battery voltage drops dspeed increases to maintain a constant speed
+                                                    // current is proportional to voltage and power = voltage x current
+                                                    // As the battery voltage drops dspeed increases to maintain a constant speed
+                                                    //ток пропорционален напряжению и мощности = произведение напряжения и тока
+                                                    //При падении напряжения батареи увеличивается скорость для поддержания постоянной скорости
   
-  dspeed=26214/volts*10/volts;                     // draw speed power correction factor=100% when battery=5V (analog reading = 1023)
-  dspeed=dspeed*8/10;                              // adjust speed to reduce overshoot
+  dspeed=26214/volts*10/volts;                      // скорость при полной батарее (ориг. draw speed power correction factor=100% when battery=5V (analog reading = 1023))
+  dspeed=dspeed*8/10;                               // отрегулированная скорость (ориг. adjust speed to reduce overshoot)
 
-  Serial.println("run");
+  Serial.println("run");                            // команда для программы трассировки движений робота
 
-  //I();END();
-  rA();rB();END();
-  //rB();rV();END();
-  //Heart(); END();
-  //O();K();C();A();H();A();END();//;N0();END();
-  //V();A();L();E();R();A();END();
-  //I();Space();END();//;A();M();Space();A();Space();R();O();B();O();T();Space();END();
-  //A();B();C();D();E();F();G();H();I();J();K();L();M();N();O();P();Q();R();S();T();U();V();W();X();Y();Z();END();
-  //N0();N1();N2();N3();N4();N5();N6();N7();N8();N9();END();
+  rA();                                             // команда для рисования  русской буквы А (файл Alfavit.ino)
+  rB();                                             // команда для рисования  русской буквы Б (файл Alfavit.ino)
+  END();                                            // после окончания рисования ничего не делать до сброса питания или нажатия кнопки reset
+  
 }
 
 

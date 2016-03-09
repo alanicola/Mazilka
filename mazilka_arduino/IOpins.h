@@ -1,7 +1,7 @@
-#define Rdirpin  8    // Right motor direction control pin
-#define Rpwmpin 10    // Right motor pulse width modulation pin
-#define Ldirpin  7    // Left  motor direction control pin
-#define Lpwmpin  9    // Left  motor pulse width modulation pin
-#define Srvopin 12    // Servo to raise / lower pen
+#define Rdirpin  8    // Правый мотор направление движения
+#define Rpwmpin 10    // Правый мотор скорость вращения
+#define Ldirpin  7    // Левый мотор направление движения
+#define Lpwmpin  9    // Левый мотор скорость вращения
+#define Srvopin 12    // Серво мотор опускает/поднимает фломастер/ручку
 
-#define Battery  5    // Battery voltage monitor pin (analog input)
+#define Battery  5    // +5 Вольт от источника питания подключаем на аналоговый вход 5
