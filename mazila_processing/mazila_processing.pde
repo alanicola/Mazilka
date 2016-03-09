@@ -1,5 +1,7 @@
 import processing.serial.*;
 
+int step = 10;
+
 Serial myPort;
 String inString = null; 
 int lf = 10;      // ASCII linefeed
@@ -22,6 +24,7 @@ void setup()
   ellipse (xw, yw, 2, 2);
   stroke(153);
   line(xw, yw, xn, yn);
+  mygrid();
 }
 
 void draw()
@@ -44,6 +47,7 @@ void draw()
       if (mCmd.equals("run"))
       {
         background(100); 
+        mygrid();
         xw = 50; 
         xn = 50; 
         yw = 300; 
