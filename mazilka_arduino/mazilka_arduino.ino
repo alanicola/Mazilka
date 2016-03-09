@@ -3,17 +3,17 @@
 #include "IOpins.h"
 
 
-int volts;                                         // battery voltage
+int volts;                                         // напряжение батареи
 int pause=-1;                                      // a value of -1 means the battery voltage is ok, 0 and 1 are used to flash LED on D13 when the battery is flat
 byte pen;
 byte turn;
 
-int lspeed;                                        // left  speed -255 to +255 (negative values are reverse)
-int rspeed;                                        // right speed -255 to +255 (negative values are reverse)
-int dspeed=80;                                     // draw  speed  +50 to +200
+int lspeed;                                        // скорость левого двигателя     -255 to +255 (отрицательное значение - вращение в обратную сторону)
+int rspeed;                                        // скорость правого двигателя    -255 to +255 (отрицательное значение - вращение в обратную сторону)
+int dspeed=80;                                     // скорость рисования            +50 to +200
 
-volatile int rcount;
-volatile int lcount;
+volatile int rcount;                                // счетчик на правом колесе (8 полный оборот)
+volatile int lcount;                                // счетчик на левом колесе  (8 полный оборот)
 
 void setup()
 {
