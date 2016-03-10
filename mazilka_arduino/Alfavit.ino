@@ -14,5 +14,5 @@ void rB() // буква Б
 void rV() // буква B
 {
   Down();Go(6);Turn(-90);Go(6);Turn(-90);Go(6);Turn(-90);Go(6);Up();
-  
+  fhgjhfgshjgd()
 }
